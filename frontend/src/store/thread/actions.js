@@ -68,12 +68,14 @@ const toggleExpandedPost = postId => async dispatch => {
 };
 
 const likePost = postId => async (dispatch, getRootState) => {
-  const response = await postService.likePost(postId);
-  const diff = response?.id ? 1 : -1; // if ID exists then the post was liked, otherwise - like was removed
+  const beforeResponse = await postService.getPostReaction(postId);
+  const afterResponse = await postService.likePost(postId);
+  const diff = afterResponse?.id ? 1 : -1;
 
   const mapLikes = post => ({
     ...post,
-    likeCount: Number(post.likeCount) + diff // diff is taken from the current closure
+    likeCount: Number(post.likeCount) + diff,
+    dislikeCount: Number(post.dislikeCount) - (beforeResponse?.isLike === false ? 1 : 0)
   });
 
   const {
@@ -85,6 +87,29 @@ const likePost = postId => async (dispatch, getRootState) => {
 
   if (expandedPost && expandedPost.id === postId) {
     dispatch(setExpandedPost(mapLikes(expandedPost)));
+  }
+};
+
+const dislikePost = postId => async (dispatch, getRootState) => {
+  const beforeResponse = await postService.getPostReaction(postId);
+  const afterResponse = await postService.dislikePost(postId);
+  const diff = afterResponse?.id ? 1 : -1;
+
+  const mapDislikes = post => ({
+    ...post,
+    dislikeCount: Number(post.dislikeCount) + diff,
+    likeCount: Number(post.likeCount) - (beforeResponse?.isLike ? 1 : 0)
+  });
+  const {
+    posts: { posts, expandedPost }
+  } = getRootState();
+
+  const updated = posts.map(post => (post.id !== postId ? post : mapDislikes(post)));
+
+  dispatch(setPosts(updated));
+
+  if (expandedPost && expandedPost.id === postId) {
+    dispatch(setExpandedPost(mapDislikes(expandedPost)));
   }
 };
 
@@ -121,5 +146,6 @@ export {
   createPost,
   toggleExpandedPost,
   likePost,
+  dislikePost,
   addComment
 };
