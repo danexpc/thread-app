@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PostReactionService {
@@ -31,5 +32,11 @@ public class PostReactionService {
             var result = postReactionsRepository.save(postReaction);
             return Optional.of(PostReactionMapper.MAPPER.reactionToPostReactionDto(result));
         }
+    }
+
+    public Optional<ResponsePostReactionDto> getReaction(UUID postId, UUID userId) {
+        var reaction = postReactionsRepository.getPostReaction(userId, postId);
+
+        return reaction.map(PostReactionMapper.MAPPER::reactionToPostReactionDto);
     }
 }
