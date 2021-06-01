@@ -36,6 +36,23 @@ class Post {
       })
     });
   }
+
+  dislikePost(postId) {
+    return this._http.load('/api/postreaction', {
+      method: HttpMethod.PUT,
+      contentType: ContentType.JSON,
+      payload: JSON.stringify({
+        postId,
+        isLike: false
+      })
+    });
+  }
+
+  getPostReaction(postId) {
+    return this._http.load(`/api/postreaction/${postId}`, {
+      method: HttpMethod.GET
+    });
+  }
 }
 
 export { Post };
