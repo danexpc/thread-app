@@ -2,13 +2,13 @@ package com.threadjava.postReactions;
 
 import com.threadjava.postReactions.dto.ReceivedPostReactionDto;
 import com.threadjava.postReactions.dto.ResponsePostReactionDto;
+import com.threadjava.postReactions.model.PostReaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.threadjava.auth.TokenService.getUserId;
 
@@ -30,5 +30,10 @@ public class PostReactionController {
             template.convertAndSend("/topic/like", "Your post was liked!");
         }
         return reaction;
+    }
+
+    @GetMapping("/{postId}")
+    public Optional<ResponsePostReactionDto> getReaction(@PathVariable UUID postId) {
+        return postsService.getReaction(postId, getUserId());
     }
 }
