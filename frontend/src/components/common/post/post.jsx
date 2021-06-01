@@ -7,7 +7,7 @@ import { Icon, Card, Image, Label } from 'src/components/common/common';
 
 import styles from './styles.module.scss';
 
-const Post = ({ post, onPostLike, onExpandedPostToggle, sharePost }) => {
+const Post = ({ post, onPostLike, onPostDislike, onExpandedPostToggle, sharePost }) => {
   const {
     id,
     image,
@@ -21,6 +21,7 @@ const Post = ({ post, onPostLike, onExpandedPostToggle, sharePost }) => {
   const date = getFromNowTime(createdAt);
 
   const handlePostLike = () => onPostLike(id);
+  const handlePostDislike = () => onPostDislike(id);
   const handleExpandedPostToggle = () => onExpandedPostToggle(id);
 
   return (
@@ -49,7 +50,13 @@ const Post = ({ post, onPostLike, onExpandedPostToggle, sharePost }) => {
           <Icon name={IconName.THUMBS_UP} />
           {likeCount}
         </Label>
-        <Label basic size="small" as="a" className={styles.toolbarBtn}>
+        <Label
+          basic
+          size="small"
+          as="a"
+          className={styles.toolbarBtn}
+          onClick={handlePostDislike}
+        >
           <Icon name={IconName.THUMBS_DOWN} />
           {dislikeCount}
         </Label>
@@ -80,6 +87,7 @@ const Post = ({ post, onPostLike, onExpandedPostToggle, sharePost }) => {
 Post.propTypes = {
   post: postType.isRequired,
   onPostLike: PropTypes.func.isRequired,
+  onPostDislike: PropTypes.func.isRequired,
   onExpandedPostToggle: PropTypes.func.isRequired,
   sharePost: PropTypes.func.isRequired
 };
